@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cours — IPv4, CIDR, VLSM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">Cahier <span>Réseaux</span></a>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a class="active" href="cours.html">Cours</a>
+    <a href="qcm.html">QCM</a>
+    <a href="exercices.html">Exercices</a>
+    <a href="carnet.html">Mes erreurs<span data-err-count></span></a>
+    <a href="cyber.html">Cyber</a>
+  </nav>
+  <button id="theme" type="button">Mode sombre</button>
+</header>
+<main class="wrap">
+  <div class="layout">
+    <aside class="toc">
+      <a href="#ipv4">IPv4</a>
+      <a href="#parties">Réseau et hôte</a>
+      <a href="#classes">Classes</a>
+      <a href="#speciales">Adresses spéciales</a>
+      <a href="#prive">Privé / public</a>
+      <a href="#calculer">Calculer une plage</a>
+      <a href="#outil">Essayeur</a>
+      <a href="#cidr">CIDR</a>
+      <a href="#agreg">Agrégation</a>
+      <a href="#vlsm">VLSM</a>
+      <a href="#methode">Méthode QCM</a>
+    </aside>
+    <article class="prose">
+      <p class="kicker">Cours à lire avant le QCM</p>
+      <h1>IPv4, classes, CIDR et VLSM</h1>
+      <p class="lead">Le texte suit tes PDF et tes pages de cours. Les encadrés « piège » sont les erreurs qui font perdre le point dans les quiz.</p>
+
+      <section id="ipv4">
+        <h2>IPv4, c’est un numéro de 32 bits</h2>
+        <p>Une adresse IPv4 identifie une machine sur un réseau IP pour que les données arrivent au bon endroit. Elle fait <b>32 bits</b>, soit <b>4 octets</b>. On l’écrit avec quatre nombres de 0 à 255 séparés par des points.</p>
+        <p>Exemple du cours : <code>192.168.40.72</code>.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>Octet 1</th><th>Octet 2</th><th>Octet 3</th><th>Octet 4</th></tr></thead>
+            <tbody>
+              <tr><td>Décimal</td><td>192</td><td>168</td><td>40</td><td>72</td></tr>
+              <tr><td>Binaire</td><td>11000000</td><td>10101000</td><td>00101000</td><td>01001000</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Chaque octet va de <code>00000000</code> (0) à <code>11111111</code> (255). Huit bits, donc 2⁸ = 256 valeurs possibles.</p>
+        <div class="callout rule"><span class="tag">À retenir</span>32 bits = 4 octets. Un octet ne dépasse jamais 255. Au-delà, on retient 1 sur l’octet de gauche.</div>
+      </section>
+
+      <section id="parties">
+        <h2>Partie réseau et partie hôte</h2>
+        <p>L’adresse se coupe en deux. La <b>partie réseau</b> est commune à toutes les machines du même réseau. La <b>partie hôte</b> change pour chaque machine. La frontière est donnée par le <b>masque</b>.</p>
+        <p>Image du cours : le réseau est le nom de la rue, l’hôte est le numéro de la maison.</p>
+        <p>Dans le masque, un bit à 1 dit « ce bit de l’adresse fait partie du réseau ». Un bit à 0 dit « ce bit identifie la machine ». Le masque <code>255.255.255.0</code> s’écrit <code>/24</code> : les 24 premiers bits sont à 1.</p>
+      </section>
+
+      <section id="classes">
+        <h2>Les classes A, B, C, D et E</h2>
+        <p>Au début, la taille du réseau était fixée par le premier octet. C’est l’adressage <b>classful</b>. On lit la classe sur les premiers bits.</p>
+        <ul>
+          <li><b>A</b> commence par <b>0</b>. Un octet de réseau, trois octets d’hôtes. Masque <code>255.0.0.0</code> /8.</li>
+          <li><b>B</b> commence par <b>10</b>. Deux octets de réseau, deux d’hôtes. Masque <code>255.255.0.0</code> /16.</li>
+          <li><b>C</b> commence par <b>110</b>. Trois octets de réseau, un d’hôtes. Masque <code>255.255.255.0</code> /24.</li>
+          <li><b>D</b> commence par <b>1110</b>. Multicast, de 224 à 239. Pas de découpage en hôtes.</li>
+          <li><b>E</b> commence par <b>1111</b>. Réservé, de 240 à 255.</li>
+        </ul>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Classe</th><th>1er octet</th><th>Plage</th><th>Masque</th><th>Réseaux</th><th>Hôtes utiles</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>A</td><td>1 – 126</td><td>1.0.0.0 → 126.255.255.255</td><td>/8</td><td>126</td><td>16&nbsp;777&nbsp;214</td></tr>
+              <tr><td>B</td><td>128 – 191</td><td>128.0.0.0 → 191.255.255.255</td><td>/16</td><td>16&nbsp;384</td><td>65&nbsp;534</td></tr>
+              <tr><td>C</td><td>192 – 223</td><td>192.0.0.0 → 223.255.255.255</td><td>/24</td><td>2&nbsp;097&nbsp;152</td><td>254</td></tr>
+              <tr><td>D</td><td>224 – 239</td><td>224.0.0.0 → 239.255.255.255</td><td>—</td><td colspan="2">Multicast</td></tr>
+              <tr><td>E</td><td>240 – 255</td><td>240.0.0.0 → 255.255.255.255</td><td>—</td><td colspan="2">Expérimental</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout trap"><span class="tag">Piège des 126, 128 et 16 millions</span>
+          Le bit 0 de la classe A laisse 7 bits pour numéroter les réseaux : 2⁷ = 128 valeurs, de 0 à 127. Le tableau du cours en garde <b>126</b>, de 1 à 126. Le 0 et le 127 sont réservés. Côté hôtes, 2²⁴ = 16&nbsp;777&nbsp;216 adresses au total, et 16&nbsp;777&nbsp;214 une fois le réseau et le broadcast retirés. Le quiz te demande la plage (premier / dernier hôte), donc la version « moins 2 ».
+        </div>
+        <p>Classe B : 14 bits de réseau (les deux bits « 10 » sont déjà pris) → 2¹⁴ = 16&nbsp;384 réseaux, et 2¹⁶ − 2 = 65&nbsp;534 hôtes. Classe C : 21 bits de réseau → 2&nbsp;097&nbsp;152 réseaux, et 254 hôtes.</p>
+      </section>
+
+      <section id="speciales">
+        <h2>Réseau, broadcast, loopback</h2>
+        <p>Dans un réseau, deux adresses ne se donnent pas à une machine.</p>
+        <ul>
+          <li><b>Adresse réseau</b> : tous les bits hôte à 0. Elle nomme le réseau.</li>
+          <li><b>Broadcast</b> : tous les bits hôte à 1. Le message part vers toutes les machines du réseau.</li>
+        </ul>
+        <p><code>127.0.0.1</code> (et tout le bloc 127.0.0.0/8) est le <b>loopback</b> : le paquet revient sur la machine. Le motif binaire est celui d’une classe A, et ce bloc n’est pas un réseau à découper.</p>
+      </section>
+
+      <section id="prive">
+        <h2>Adresse privée ou publique</h2>
+        <p>Une adresse privée reste dans l’entreprise ou la maison. Elle n’est pas routée telle quelle sur Internet. Il y a trois plages, à connaître par cœur.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Plage</th><th>CIDR</th><th>Classe d’origine</th></tr></thead>
+            <tbody>
+              <tr><td>10.0.0.0 → 10.255.255.255</td><td>10.0.0.0/8</td><td>A</td></tr>
+              <tr><td>172.16.0.0 → 172.31.255.255</td><td>172.16.0.0/12</td><td>B</td></tr>
+              <tr><td>192.168.0.0 → 192.168.255.255</td><td>192.168.0.0/16</td><td>C</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout trap"><span class="tag">Piège 172</span>172.15.x.x et 172.32.x.x sont publiques. Seuls les seconds octets de 16 à 31 sont privés. 192.169.x.x est publique : seul 192.168 l’est. 11.x.x.x est publique : seul 10 l’est en classe A.</div>
+      </section>
+
+      <section id="calculer">
+        <h2>Calculer réseau, broadcast, premier, dernier, N-ième</h2>
+        <p>Pour une question du quiz « adressage IP », l’adresse qu’on te montre est une machine. Tu retrouves d’abord la classe, puis tu appliques le masque de cette classe.</p>
+        <ol>
+          <li>Classe = premier octet.</li>
+          <li>Masque par défaut : A /8, B /16, C /24.</li>
+          <li>Réseau : recopier la partie réseau, mettre la partie hôte à 0.</li>
+          <li>Broadcast : partie hôte à 255.</li>
+          <li>Premier hôte = réseau + 1. Dernier hôte = broadcast − 1.</li>
+          <li>Le N-ième hôte utilisable = adresse réseau + N.</li>
+        </ol>
+        <div class="callout ex"><span class="tag">Exemple classe B</span>
+          Machine <code>172.16.5.40</code>. Classe B, masque 255.255.0.0, CIDR /16.<br>
+          Réseau <code>172.16.0.0</code>. Broadcast <code>172.16.255.255</code>.<br>
+          Premier hôte <code>172.16.0.1</code>. Dernier hôte <code>172.16.255.254</code>.<br>
+          200ᵉ hôte : 172.16.0.0 + 200 = <code>172.16.0.200</code>.
+        </div>
+        <div class="callout ex"><span class="tag">Exemple avec retenue</span>
+          Réseau de classe A <code>10.0.0.0</code>, 300ᵉ hôte. 300 = 256 + 44, donc on avance d’un octet : <code>10.0.1.44</code>. Écrire 10.0.0.300 est impossible.
+        </div>
+        <div class="callout trap"><span class="tag">Piège du +1 en trop</span>Le 1er hôte est déjà « réseau + 1 ». Le 200ᵉ est « réseau + 200 », pas « réseau + 201 ». Si tu pars de .1 et que tu ajoutes encore 200, tu obtiens le 201ᵉ hôte.</div>
+        <div class="callout trap"><span class="tag">Piège du /24 systématique</span>Sur une classe A, <code>10.4.8.9</code> a pour réseau <code>10.0.0.0</code>, pas 10.4.8.0. Sur une classe B, <code>172.16.5.40</code> a pour réseau <code>172.16.0.0</code>, pas 172.16.5.0. Le /24 est le réflexe de la classe C seulement.</div>
+      </section>
+
+      <section id="outil">
+        <h2>Essayeur d’adresse</h2>
+        <p>Tape une adresse. Coche « masque de classe » pour le calcul du QCM IPv4. Décoche-le et bouge le curseur pour voir un masque CIDR.</p>
+        <div class="tool">
+          <div class="row">
+            <label class="field">Adresse
+              <input id="tool-ip" type="text" value="172.16.5.40" spellcheck="false">
+            </label>
+            <label class="field">Préfixe <span id="tool-prefix-val">/16</span>
+              <input id="tool-prefix" type="range" min="8" max="30" value="16">
+            </label>
+            <label class="field check"><input id="tool-classful" type="checkbox" checked> Masque de classe</label>
+          </div>
+          <div id="tool-out"></div>
+        </div>
+      </section>
+
+      <section id="cidr">
+        <h2>Le CIDR</h2>
+        <p>Les classes gaspillaient des adresses : une entreprise qui voulait 300 machines devait prendre une classe B entière, soit 65&nbsp;534 hôtes. Les tables de routage grossissaient aussi.</p>
+        <p>En 1993, le <b>CIDR</b> (Classless Inter-Domain Routing) enlève cette rigidité. Le suffixe <code>/n</code> dit combien de bits, en partant de la gauche, forment le réseau. Pour IPv4, n va de 0 à 32. Plus n est grand, plus le bloc est petit.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>CIDR</th><th>Masque</th><th>Taille du bloc</th><th>Hôtes utiles</th></tr></thead>
+            <tbody>
+              <tr><td>/24</td><td>255.255.255.0</td><td>256</td><td>254</td></tr>
+              <tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>126</td></tr>
+              <tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>62</td></tr>
+              <tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>30</td></tr>
+              <tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>14</td></tr>
+              <tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>6</td></tr>
+              <tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Le <b>pas</b>, pour le dernier octet, est la taille du bloc quand le masque coupe dans cet octet. Pour /27, le pas vaut 32. Les réseaux tombent sur 0, 32, 64, 96, 128, 160, 192, 224.</p>
+        <div class="callout rule"><span class="tag">Deux formules, deux usages</span>
+          Hôtes utiles = 2^bits hôtes − 2.<br>
+          Nombre de sous-réseaux = 2^bits empruntés.<br>
+          Bits empruntés, sur un classe C, = CIDR − 24. CIDR = 32 − bits hôtes.
+        </div>
+      </section>
+
+      <section id="agreg">
+        <h2>Agréger des routes</h2>
+        <p>L’agrégation (supernetting) rassemble plusieurs réseaux contigus en une seule route, pour alléger le routeur.</p>
+        <p>Exemple du cours : de <code>172.16.8.0/24</code> à <code>172.16.11.0/24</code>.</p>
+        <ul>
+          <li>172.16 est commun : 16 bits déjà fixes.</li>
+          <li>Le 3ᵉ octet : 8 = <code>00001000</code>, 9 = <code>00001001</code>, 10 = <code>00001010</code>, 11 = <code>00001011</code>.</li>
+          <li>Les 6 premiers bits de cet octet sont identiques (<code>000010</code>).</li>
+          <li>Préfixe = 16 + 6 = <b>/22</b>. On met les bits variables à 0 : <b>172.16.8.0/22</b>.</li>
+        </ul>
+        <p>Quatre /24 contigus font un /22, à condition que le premier soit aligné. 8 est divisible par 4, donc 8 est un début de /22. 9 ne le serait pas.</p>
+      </section>
+
+      <section id="vlsm">
+        <h2>VLSM : des sous-réseaux de tailles différentes</h2>
+        <p>Le VLSM découpe un bloc en sous-réseaux adaptés au nombre de machines, au lieu d’imposer la même taille partout.</p>
+        <div class="callout trap"><span class="tag">Règle d’or du cours</span>Classe les besoins du plus grand nombre d’hôtes au plus petit avant tout calcul. Sinon les blocs se chevauchent.</div>
+        <ol>
+          <li>Trier les besoins, du plus gros au plus petit.</li>
+          <li>Trouver le plus petit n tel que 2ⁿ − 2 ≥ besoin.</li>
+          <li>CIDR = 32 − n. Taille du bloc = 2ⁿ.</li>
+          <li>Écrire réseau, premier, dernier, broadcast.</li>
+          <li>Le sous-réseau suivant commence à broadcast + 1.</li>
+          <li>Vérifier que tout tient dans le réseau de départ.</li>
+        </ol>
+        <h3>Exemple guidé du cours</h3>
+        <p>Départ : <code>192.168.1.0/24</code>. Besoins : LAN A 100 hôtes, LAN B 20 hôtes, liaison WAN 2 hôtes.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Zone</th><th>Calcul</th><th>Réseau</th><th>Plage utile</th><th>Broadcast</th></tr></thead>
+            <tbody>
+              <tr><td>LAN A, 100</td><td>2⁷ − 2 = 126 ≥ 100 → /25</td><td>192.168.1.0/25</td><td>.1 → .126</td><td>.127</td></tr>
+              <tr><td>LAN B, 20</td><td>2⁵ − 2 = 30 ≥ 20 → /27</td><td>192.168.1.128/27</td><td>.129 → .158</td><td>.159</td></tr>
+              <tr><td>WAN, 2</td><td>2² − 2 = 2 → /30</td><td>192.168.1.160/30</td><td>.161 → .162</td><td>.163</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Après le /25, on reprend à .128, pas à .127. 128 est un multiple de 32, donc le /27 est bien aligné. Un /30 de liaison est le bloc juste : exactement 2 machines.</p>
+        <div class="callout trap"><span class="tag">Piège « juste un cran au-dessus »</span>
+          30 hôtes tiennent dans un /27 (30 utiles). 31 hôtes n’y tiennent plus : il faut un /26 (62 utiles). 4 sous-réseaux tiennent dans un /26 (2² = 4). 5 sous-réseaux demandent un /27 (2³ = 8). On prend la plus petite taille qui suffit, et on accepte qu’il en reste.
+        </div>
+      </section>
+
+      <section id="methode">
+        <h2>Méthode pour le jour du QCM</h2>
+        <h3>Question « voici une IP »</h3>
+        <ol>
+          <li>Premier octet → classe A, B ou C (ou D/E si on te le demande).</li>
+          <li>Masque et /n de la classe.</li>
+          <li>Réseau, broadcast, premier, dernier.</li>
+          <li>Privée seulement si elle est dans une des trois plages.</li>
+          <li>N-ième hôte = réseau + N, avec la retenue.</li>
+        </ol>
+        <h3>Question « combien de sous-réseaux / de machines »</h3>
+        <ol>
+          <li>Si on te donne le masque : bits hôtes = 32 − CIDR, hôtes = 2^hôtes − 2, sous-réseaux = 2^(CIDR − 24) sur un classe C.</li>
+          <li>Si on te donne un nombre de sous-réseaux : plus petit n avec 2ⁿ ≥ besoin, CIDR = 24 + n.</li>
+          <li>Si on te donne un nombre de machines : plus petit n avec 2ⁿ − 2 ≥ besoin, CIDR = 32 − n.</li>
+        </ol>
+        <p>Entraîne-toi sur la page <a href="qcm.html">QCM</a>. Chaque erreur est ensuite relue dans le <a href="carnet.html">carnet</a>.</p>
+      </section>
+    </article>
+  </div>
+</main>
+<script src="js/net.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/cours.js"></script>
+</body>
+</html>

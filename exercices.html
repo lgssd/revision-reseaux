@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices — VLSM et CIDR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">Cahier <span>Réseaux</span></a>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="qcm.html">QCM</a>
+    <a class="active" href="exercices.html">Exercices</a>
+    <a href="carnet.html">Mes erreurs<span data-err-count></span></a>
+    <a href="cyber.html">Cyber</a>
+  </nav>
+  <button id="theme" type="button">Mode sombre</button>
+</header>
+<main class="wrap prose">
+  <p class="kicker">Feuille d’exercices</p>
+  <h1>Les trois exercices, avec la correction qui explique</h1>
+  <p>Essaie chaque énoncé. Le bouton ne donne pas seulement la bonne case : il dit quelle règle a cassé le calcul.</p>
+
+  <section>
+    <h2>Exercice 1 — Agrégation</h2>
+    <p>Trouve la route unique qui résume ces quatre sous-réseaux :</p>
+    <p><code>192.168.32.0/24</code> · <code>192.168.33.0/24</code> · <code>192.168.34.0/24</code> · <code>192.168.35.0/24</code></p>
+    <div class="row">
+      <label class="field">Ta route (ex. 192.168.32.0/22)
+        <input id="agg" type="text" spellcheck="false" placeholder="a.b.c.d/n">
+      </label>
+      <button class="btn primary" id="agg-btn" type="button">Vérifier</button>
+    </div>
+    <div id="agg-why"></div>
+    <details>
+      <summary>Voir la démarche complète</summary>
+      <p>32 = <code>00100000</code>, 33 = <code>00100001</code>, 34 = <code>00100010</code>, 35 = <code>00100011</code>.</p>
+      <p>Les bits communs du 3ᵉ octet sont <code>001000</code>. Deux bits changent, donc on recule de /24 à <b>/22</b>. En remettant ces deux bits à 0, le réseau vaut 32. La route est <b>192.168.32.0/22</b>. Elle couvre .32 à .35, et rien d’autre.</p>
+    </details>
+  </section>
+
+  <section>
+    <h2>Exercice 2 — Plan VLSM</h2>
+    <p>Réseau global <code>172.16.0.0/22</code> (1024 adresses, jusqu’à 172.16.3.255). Découpe-le pour :</p>
+    <ul>
+      <li>Clientèle : 480 hôtes</li>
+      <li>Administration : 115 hôtes</li>
+      <li>Serveurs DMZ : 28 hôtes</li>
+      <li>Liaison inter-routeurs : 2 hôtes</li>
+    </ul>
+    <p class="small muted">L’ordre du plus gros au plus petit est déjà celui de l’énoncé. CIDR avec le slash.</p>
+
+    <div class="sn">
+      <h3>1 · Clientèle · 480 hôtes</h3>
+      <div class="cells">
+        <label class="field">Adresse réseau<input data-sn="0" data-k="network" type="text"></label>
+        <label class="field">Masque CIDR<input data-sn="0" data-k="prefix" type="text" placeholder="/23"></label>
+        <label class="field">Première IP utile<input data-sn="0" data-k="first" type="text"></label>
+        <label class="field">Dernière IP utile<input data-sn="0" data-k="last" type="text"></label>
+        <label class="field">Broadcast<input data-sn="0" data-k="broadcast" type="text"></label>
+      </div>
+    </div>
+    <div class="sn">
+      <h3>2 · Administration · 115 hôtes</h3>
+      <div class="cells">
+        <label class="field">Adresse réseau<input data-sn="1" data-k="network" type="text"></label>
+        <label class="field">Masque CIDR<input data-sn="1" data-k="prefix" type="text"></label>
+        <label class="field">Première IP utile<input data-sn="1" data-k="first" type="text"></label>
+        <label class="field">Dernière IP utile<input data-sn="1" data-k="last" type="text"></label>
+        <label class="field">Broadcast<input data-sn="1" data-k="broadcast" type="text"></label>
+      </div>
+    </div>
+    <div class="sn">
+      <h3>3 · DMZ · 28 hôtes</h3>
+      <div class="cells">
+        <label class="field">Adresse réseau<input data-sn="2" data-k="network" type="text"></label>
+        <label class="field">Masque CIDR<input data-sn="2" data-k="prefix" type="text"></label>
+        <label class="field">Première IP utile<input data-sn="2" data-k="first" type="text"></label>
+        <label class="field">Dernière IP utile<input data-sn="2" data-k="last" type="text"></label>
+        <label class="field">Broadcast<input data-sn="2" data-k="broadcast" type="text"></label>
+      </div>
+    </div>
+    <div class="sn">
+      <h3>4 · Liaison · 2 hôtes</h3>
+      <div class="cells">
+        <label class="field">Adresse réseau<input data-sn="3" data-k="network" type="text"></label>
+        <label class="field">Masque CIDR<input data-sn="3" data-k="prefix" type="text"></label>
+        <label class="field">Première IP utile<input data-sn="3" data-k="first" type="text"></label>
+        <label class="field">Dernière IP utile<input data-sn="3" data-k="last" type="text"></label>
+        <label class="field">Broadcast<input data-sn="3" data-k="broadcast" type="text"></label>
+      </div>
+    </div>
+    <button class="btn primary" id="plan-btn" type="button">Vérifier le plan</button>
+    <div id="plan-why"></div>
+    <details>
+      <summary>Voir le plan complet</summary>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Zone</th><th>Pourquoi ce masque</th><th>Réseau</th><th>Utile</th><th>Broadcast</th></tr></thead>
+          <tbody>
+            <tr><td>Clientèle 480</td><td>2⁸ − 2 = 254 trop petit. 2⁹ − 2 = 510. n = 9, /23, bloc de 512.</td><td>172.16.0.0/23</td><td>172.16.0.1 → 172.16.1.254</td><td>172.16.1.255</td></tr>
+            <tr><td>Admin 115</td><td>2⁷ − 2 = 126. /25, bloc de 128. On reprend à .2.0.</td><td>172.16.2.0/25</td><td>172.16.2.1 → .2.126</td><td>172.16.2.127</td></tr>
+            <tr><td>DMZ 28</td><td>2⁵ − 2 = 30. /27, bloc de 32. On reprend à .2.128.</td><td>172.16.2.128/27</td><td>.129 → .158</td><td>.159</td></tr>
+            <tr><td>Liaison 2</td><td>2² − 2 = 2. /30. On reprend à .2.160.</td><td>172.16.2.160/30</td><td>.161 → .162</td><td>.163</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Tout cela tient dans 172.16.0.0/22. Il reste des adresses libres de 172.16.2.164 à 172.16.3.255.</p>
+    </details>
+  </section>
+
+  <section>
+    <h2>Exercice 3 — La panne</h2>
+    <p>Un serveur est en <code>192.168.4.158/27</code>. Sa passerelle est en <code>192.168.4.161/27</code>. Les deux refusent de communiquer directement. Pourquoi ?</p>
+    <label class="choice" style="display:block;margin:8px 0"><input type="radio" name="panne" value="same"> Ils sont dans le même réseau, le câble est en cause.</label>
+    <label class="choice" style="display:block;margin:8px 0"><input type="radio" name="panne" value="bc"> 158 est un broadcast, donc le serveur n’a pas une adresse d’hôte.</label>
+    <label class="choice" style="display:block;margin:8px 0"><input type="radio" name="panne" value="split"> Ils sont dans deux sous-réseaux /27 différents.</label>
+    <div class="row" style="margin-top:10px">
+      <label class="field">Réseau du serveur<input id="panne-a" type="text" placeholder="192.168.4.?"></label>
+      <label class="field">Réseau de la passerelle<input id="panne-b" type="text" placeholder="192.168.4.?"></label>
+      <button class="btn primary" id="panne-btn" type="button">Vérifier</button>
+    </div>
+    <div id="panne-why"></div>
+    <details>
+      <summary>Voir le calcul</summary>
+      <p>/27 → masque 255.255.255.224 → blocs de 32 adresses. Dans le dernier octet, les découpes sont 0, 32, 64, 96, 128, 160, 192, 224.</p>
+      <p>158 est entre 128 et 159. Réseau <b>192.168.4.128/27</b>, broadcast 192.168.4.159, dernier hôte <b>192.168.4.158</b>. Le serveur a donc une adresse valide, la dernière du bloc.</p>
+      <p>161 est entre 160 et 191. Réseau <b>192.168.4.160/27</b>, premier hôte <b>192.168.4.161</b>. La passerelle est dans le bloc suivant.</p>
+      <p>Deux réseaux différents ne se parlent pas directement : il faut un routeur dont une patte est dans chaque bloc. Ici, la « passerelle » n’est même pas dans le réseau du serveur.</p>
+    </details>
+  </section>
+</main>
+<script src="js/net.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/exercices.js"></script>
+</body>
+</html>

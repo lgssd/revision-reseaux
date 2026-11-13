@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cahier de révision — IPv4, CIDR, VLSM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">Cahier <span>Réseaux</span></a>
+  <nav>
+    <a class="active" href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="qcm.html">QCM</a>
+    <a href="exercices.html">Exercices</a>
+    <a href="carnet.html">Mes erreurs<span data-err-count></span></a>
+    <a href="cyber.html">Cyber</a>
+  </nav>
+  <button id="theme" type="button">Mode sombre</button>
+</header>
+<main class="wrap">
+  <p class="kicker">BTS CIEL · cours réseaux</p>
+  <h1>Réviser l’adressage jusqu’à comprendre tes erreurs.</h1>
+  <p class="lead">Tout le cours IPv4 par classes, le CIDR, le VLSM et les trois exercices sont regroupés ici. Le QCM te donne une adresse, tu réponds, et chaque case fausse est expliquée avec les nombres de la question.</p>
+
+  <div class="grid cards" style="margin-top:22px">
+    <a class="card" href="cours.html"><strong>Cours</strong><p>Classes, privé/public, réseau, broadcast, hôtes, CIDR, agrégation, VLSM. Avec un essayeur d’adresse.</p></a>
+    <a class="card" href="qcm.html"><strong>QCM</strong><p>Le même type de questions que les quiz : classe, masque, plage, N-ième hôte, masque VLSM.</p></a>
+    <a class="card" href="exercices.html"><strong>Exercices</strong><p>L’agrégation, le plan 172.16.0.0/22 et la panne 192.168.4.158/27, corrigés pas à pas.</p></a>
+    <a class="card" href="carnet.html"><strong>Carnet d’erreurs</strong><p>Tes réponses fausses restent enregistrées sur cet ordinateur, avec la règle que tu as ratée.</p></a>
+  </div>
+
+  <h2 style="margin-top:36px">À savoir avant d’ouvrir le QCM</h2>
+  <div class="grid cards">
+    <div class="callout rule"><span class="tag">Hôtes</span>2ⁿ − 2. On retire l’adresse réseau et le broadcast.</div>
+    <div class="callout rule"><span class="tag">Sous-réseaux</span>2^bits empruntés. Ici on ne retire pas 2.</div>
+    <div class="callout rule"><span class="tag">N-ième hôte</span>Adresse réseau + N. Le 1er est déjà réseau + 1.</div>
+    <div class="callout trap"><span class="tag">VLSM</span>Toujours du plus gros besoin au plus petit, sinon les blocs se chevauchent.</div>
+  </div>
+
+  <h2 style="margin-top:28px">Mémo des classes</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Classe</th><th>Premier octet</th><th>Masque</th><th>Réseau / broadcast</th><th>Hôtes utiles</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>1 – 126</td><td>255.0.0.0 /8</td><td>X.0.0.0 et X.255.255.255</td><td>16&nbsp;777&nbsp;214</td></tr>
+        <tr><td>B</td><td>128 – 191</td><td>255.255.0.0 /16</td><td>X.Y.0.0 et X.Y.255.255</td><td>65&nbsp;534</td></tr>
+        <tr><td>C</td><td>192 – 223</td><td>255.255.255.0 /24</td><td>X.Y.Z.0 et X.Y.Z.255</td><td>254</td></tr>
+        <tr><td>D</td><td>224 – 239</td><td>—</td><td>Multicast</td><td>—</td></tr>
+        <tr><td>E</td><td>240 – 255</td><td>—</td><td>Expérimental</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">127.0.0.1 est le loopback. Les plages privées : 10.0.0.0/8, 172.16.0.0 à 172.31.255.255, 192.168.0.0/16.</p>
+</main>
+<script src="js/journal.js"></script>
+</body>
+</html>

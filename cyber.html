@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Révision cyber — notions du jeu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">Cahier <span>Réseaux</span></a>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="qcm.html">QCM</a>
+    <a href="exercices.html">Exercices</a>
+    <a href="carnet.html">Mes erreurs<span data-err-count></span></a>
+    <a class="active" href="cyber.html">Cyber</a>
+  </nav>
+  <button id="theme" type="button">Mode sombre</button>
+</header>
+<main class="wrap prose">
+  <p class="kicker">Complément · escape game</p>
+  <h1>Les idées du jeu, pour les comprendre</h1>
+  <p class="lead">Cette page regroupe les notions de cybersécurité présentes dans le jeu : hygiène, vie privée, réseau, et réaction après une intrusion. Elle ne donne pas les flags. Le QCM d’adressage, lui, est sur les autres pages.</p>
+
+  <section>
+    <h2>Hygiène numérique</h2>
+    <p>Le socle, c’est mettre à jour, garder des sauvegardes déconnectées du quotidien, et installer depuis les sources officielles. Ouvrir une pièce jointe « pour voir », ou couper l’antivirus parce qu’il gêne, agrandit le trou au lieu de le fermer.</p>
+  </section>
+
+  <section>
+    <h2>Ce qui te localise</h2>
+    <p>Nom, lycée et ville disent qui tu es. Le club de sport <b>avec les horaires d’entraînement</b> dit où tu es à une heure donnée. C’est l’information qui permet de te situer physiquement. Une photo de classe sans légende en dit beaucoup moins.</p>
+  </section>
+
+  <section>
+    <h2>Message suspect</h2>
+    <p>On ne transfère pas un message douteux à toute la classe « pour être sûr que la personne l’ait ». On élargit alors la diffusion du piège. On prévient l’adulte ou le service concerné, et on n’ouvre pas le lien.</p>
+  </section>
+
+  <section>
+    <h2>Lire une réponse HTTP</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Code</th><th>Sens utile au QCM</th></tr></thead>
+        <tbody>
+          <tr><td>200</td><td>La ressource a été obtenue. Un 200 sur un fichier sensible est une vraie fuite.</td></tr>
+          <tr><td>301 / 302</td><td>Redirection.</td></tr>
+          <tr><td>401</td><td>Il faut s’authentifier.</td></tr>
+          <tr><td>403</td><td>Connu, mais interdit. Ce n’est pas un succès.</td></tr>
+          <tr><td>404</td><td>Introuvable. Demander une page ne prouve pas qu’elle existe.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>On sépare ce que l’attaquant a demandé de ce que le serveur a accordé. Seul le code de réponse tranche.</p>
+  </section>
+
+  <section>
+    <h2>DNS falsifié</h2>
+    <p>Le DNS traduit un nom en adresse IP. Si la réponse est modifiée, la barre d’adresse affiche encore <code>www.mabanque.fr</code>, et la connexion part vers une autre machine. L’utilisateur voit le bon nom, et parle au mauvais serveur.</p>
+  </section>
+
+  <section>
+    <h2>Authentification et autorisation</h2>
+    <p>L’authentification répond à « qui es-tu ? ». L’autorisation répond à « as-tu le droit sur cet objet ? ». Changer un numéro dans l’adresse (<code>/facture/42</code> vers <code>/facture/43</code>) et recevoir la facture d’un autre, c’est une faille d’autorisation : la requête a l’air normale, et le serveur n’a pas vérifié que l’objet appartient au demandeur.</p>
+    <div class="callout rule"><span class="tag">Parade durable</span>On ne se contente pas d’interdire quelques caractères. On sépare le code des données, on vérifie le droit à chaque accès, et on ferme la liste de ce qui est permis.</div>
+  </section>
+
+  <section>
+    <h2>En-têtes qui protègent le navigateur</h2>
+    <ul>
+      <li><b>HSTS</b> : le navigateur n’utilise plus que HTTPS pour ce domaine, même si on tape http.</li>
+      <li><b>CSP</b> : limite l’origine des scripts.</li>
+      <li>L’en-tête qui empêche d’afficher le site dans une frame vise le détournement de clic.</li>
+      <li>L’en-tête qui empêche le navigateur de deviner le type du fichier vise une mauvaise interprétation du contenu.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Réponse à incident</h2>
+    <p>L’ordre se retient comme une chaîne : <b>isoler, préserver, analyser, éradiquer, rétablir, tirer le bilan</b>.</p>
+    <div class="callout trap"><span class="tag">Deux gestes qui détruisent l’enquête</span>Redémarrer efface la mémoire vive, donc une partie des preuves, et ne retire pas une persistance par tâche planifiée. Formater ou nettoyer avant d’avoir mesuré l’étendue fait disparaître ce qu’il restait à comprendre.</div>
+    <p>Pour une clé cloud publiée par erreur, on révoque d’abord la clé, puis on cherche ce qui a été fait avec, puis on corrige la cause de la publication.</p>
+  </section>
+
+  <section>
+    <h2>Sauvegardes et objets connectés</h2>
+    <p>La règle 3-2-1 : <b>3</b> copies, sur <b>2</b> supports différents, dont <b>1</b> hors site. Une copie unique à côté de la machine meurt avec elle, ransomware compris.</p>
+    <p>Un objet connecté reçoit rarement des correctifs. On le considère comme un futur point d’entrée, et on le place dans un réseau séparé pour qu’une compromission n’atteigne pas les machines importantes.</p>
+  </section>
+
+  <section>
+    <h2>Droits de fichiers</h2>
+    <p>Les droits se lisent en trois blocs : propriétaire, groupe, tous les autres. <code>rwx</code> = lecture, écriture, exécution. Un <code>w</code> dans le troisième bloc veut dire que n’importe qui peut modifier le fichier. Sur un fichier qui lance une tâche système, c’est une porte d’entrée.</p>
+  </section>
+</main>
+<script src="js/journal.js"></script>
+</body>
+</html>

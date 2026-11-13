@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carnet d’erreurs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">Cahier <span>Réseaux</span></a>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="qcm.html">QCM</a>
+    <a href="exercices.html">Exercices</a>
+    <a class="active" href="carnet.html">Mes erreurs<span data-err-count></span></a>
+    <a href="cyber.html">Cyber</a>
+  </nav>
+  <button id="theme" type="button">Mode sombre</button>
+</header>
+<main class="wrap">
+  <p class="kicker">Ce que tu as raté sur cet ordinateur</p>
+  <h1>Carnet d’erreurs</h1>
+  <p class="lead">Chaque vérification fausse du QCM ou des exercices est notée ici, dans ce navigateur. Relis la règle, puis refais une question du même type.</p>
+  <p class="no-print"><button class="btn" id="clear" type="button">Effacer le carnet</button> <a class="btn primary" href="qcm.html" style="text-decoration:none;display:inline-block">Refaire un QCM</a></p>
+  <div id="list" style="margin-top:16px"></div>
+
+  <h2 style="margin-top:36px">Les pièges qui reviennent tout le temps</h2>
+  <div class="callout trap"><span class="tag">Oublier le −2</span>2ⁿ est la taille du bloc. Les machines utiles sont 2ⁿ − 2. Répondre 256 pour un /24 compte le .0 et le .255.</div>
+  <div class="callout trap"><span class="tag">Mettre un −2 aux sous-réseaux</span>Le nombre de sous-réseaux est 2^bits empruntés. Le premier et le dernier bloc se donnent. Le −2 ne concerne que les hôtes à l’intérieur d’un bloc.</div>
+  <div class="callout trap"><span class="tag">Classe A traitée en /24</span>10.4.8.9 → réseau 10.0.0.0, broadcast 10.255.255.255, premier 10.0.0.1, dernier 10.255.255.254.</div>
+  <div class="callout trap"><span class="tag">172 trop large</span>Privé seulement de 172.16 à 172.31. 172.15 et 172.32 sont publics.</div>
+  <div class="callout trap"><span class="tag">N-ième hôte</span>Réseau + N. Pas réseau + N + 1. Si N dépasse 255, on reporte sur l’octet de gauche.</div>
+  <div class="callout trap"><span class="tag">Juste au-dessus d’une puissance</span>30 hôtes → /27. 31 hôtes → /26. 4 sous-réseaux → /26. 5 sous-réseaux → /27.</div>
+  <div class="callout trap"><span class="tag">Même /27, réseaux différents</span>Le masque dit la taille du bloc. L’adresse dit dans quel bloc on est. 158/27 et 161/27 sont voisins, et déjà séparés par la frontière 160.</div>
+  <div class="callout trap"><span class="tag">VLSM dans le désordre</span>Placer un petit réseau avant un gros casse l’alignement. On trie toujours par nombre d’hôtes décroissant.</div>
+  <div class="callout trap"><span class="tag">Agrégation trop large</span>/22 pour quatre /24 est juste. /21 en avale huit. L’adresse de départ doit être alignée sur la taille du bloc.</div>
+</main>
+<script src="js/journal.js"></script>
+<script>
+(function () {
+  const list = document.getElementById("list");
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  function draw() {
+    const items = Journal.load();
+    if (!items.length) {
+      list.innerHTML = '<div class="empty">Aucune erreur enregistrée. Lance un QCM ou un exercice : les ratés arriveront ici.</div>';
+      return;
+    }
+    list.innerHTML = items.map((it) => {
+      const when = new Date(it.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" });
+      return `<article class="panel" style="padding:14px 16px;margin:10px 0">
+        <div class="q-head"><span class="pill">${esc(it.topic)}</span><span class="muted small">${esc(when)}</span></div>
+        <h3>${esc(it.prompt)}</h3>
+        <p><b>Toi :</b> <code>${esc(it.yours)}</code><br><b>Attendu :</b> <code>${esc(it.correct)}</code></p>
+        <p>${esc(it.why)}</p>
+      </article>`;
+    }).join("");
+  }
+  document.getElementById("clear").addEventListener("click", () => {
+    Journal.clearJournal();
+    draw();
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

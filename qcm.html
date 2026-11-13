@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QCM — IPv4 et VLSM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">Cahier <span>Réseaux</span></a>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a class="active" href="qcm.html">QCM</a>
+    <a href="exercices.html">Exercices</a>
+    <a href="carnet.html">Mes erreurs<span data-err-count></span></a>
+    <a href="cyber.html">Cyber</a>
+  </nav>
+  <button id="theme" type="button">Mode sombre</button>
+</header>
+<main class="wrap">
+  <p class="kicker">Entraînement</p>
+  <h1>QCM commenté</h1>
+  <p class="lead">Même famille de questions que tes quiz IPv4 et VLSM. Après « Vérifier », chaque réponse fausse est expliquée sur cette adresse, puis rangée dans le carnet.</p>
+  <div class="tabs">
+    <button type="button" data-tab="classful" aria-pressed="true">Adressage par classes</button>
+    <button type="button" data-tab="vlsm" aria-pressed="false">VLSM / CIDR</button>
+    <button type="button" data-tab="theory" aria-pressed="false">Questions de cours</button>
+  </div>
+  <div class="row" style="margin-bottom:14px">
+    <label class="field" id="diff-wrap">Difficulté
+      <select id="diff">
+        <option value="facile">Facile — classe, masque, plage</option>
+        <option value="moyen">Moyen — plus le N-ième hôte</option>
+        <option value="difficile">Difficile — plus CIDR et privé/public</option>
+      </select>
+    </label>
+    <label class="field check" id="exam-wrap"><input id="exam" type="checkbox"> Mode examen, sans couleurs d’octets</label>
+  </div>
+  <p class="scoreline" id="stats"></p>
+  <div class="panel" id="stage" style="padding:18px;margin-top:12px"></div>
+</main>
+<script src="js/net.js"></script>
+<script src="js/journal.js"></script>
+<script src="js/qcm.js"></script>
+</body>
+</html>
